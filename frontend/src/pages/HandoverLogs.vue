@@ -22,7 +22,7 @@ onMounted(async () => {
     <div class="panel">
       <table>
         <thead>
-          <tr><th>单号</th><th>交班方</th><th>接班方</th><th>批次数</th><th>状态</th><th>开始</th><th>结束</th></tr>
+          <tr><th>单号</th><th>交班方</th><th>接班方</th><th>批次数</th><th>托管数</th><th>状态</th><th>开始</th><th>结束</th></tr>
         </thead>
         <tbody>
           <tr v-for="h in rows" :key="h.id">
@@ -30,6 +30,7 @@ onMounted(async () => {
             <td>{{ h.from_shift_name }}</td>
             <td>{{ h.to_shift_name }}</td>
             <td>{{ h.batch_count }}</td>
+            <td>{{ h.escrow_count }}</td>
             <td>{{ h.status }}</td>
             <td>{{ h.started_at }}</td>
             <td>{{ h.finished_at || '—' }}</td>

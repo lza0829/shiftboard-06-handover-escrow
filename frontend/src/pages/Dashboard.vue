@@ -23,6 +23,7 @@ onMounted(async () => {
       <div class="stats">
         <div class="stat"><div class="k">班次数</div><div class="v">{{ data.班次数 }}</div></div>
         <div class="stat"><div class="k">在途批次</div><div class="v">{{ data.在途批次数 }}</div></div>
+        <div class="stat escrow-stat"><div class="k">托管批次</div><div class="v">{{ data.托管批次数 }}</div></div>
         <div class="stat"><div class="k">进行中交班</div><div class="v">{{ data.进行中交班 }}</div></div>
       </div>
       <div class="panel">

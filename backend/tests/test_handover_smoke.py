@@ -7,18 +7,18 @@ from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
-os.environ["DATA_DIR"] = str(ROOT / "backend" / "data_test")
-os.environ["FIXTURES_DIR"] = str(ROOT / "fixtures")
-
-db_path = Path(os.environ["DATA_DIR"]) / "app.db"
-if db_path.exists():
-    db_path.unlink()
 
 from app.main import app  # noqa: E402
 
 
 @pytest.fixture(scope="module")
 def client():
+    data_dir = ROOT / "backend" / "data_test"
+    os.environ["DATA_DIR"] = str(data_dir)
+    os.environ["FIXTURES_DIR"] = str(ROOT / "fixtures")
+    db_path = data_dir / "app.db"
+    if db_path.exists():
+        db_path.unlink()
     with TestClient(app) as c:
         yield c
 
@@ -63,4 +63,10 @@ def test_handover_and_reconcile(client):
 
     reports = client.get("/api/reconcile").json()
     assert reports
-    assert reports[0]["一致"] is True
+    # 每个交班单有发起与出口两份同源报告
+    mine = [r for r in reports if r["handover_id"] == hid]
+    assert {r["exit_type"] for r in mine} == {"发起", "完成交班"}
+    assert all(r["一致"] for r in mine)
+    done_report = next(r for r in mine if r["exit_type"] == "完成交班")
+    assert done_report["escrow_count"] >= 4
+    assert done_report["after_to_count"] >= 4
